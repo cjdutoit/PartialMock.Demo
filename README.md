@@ -6,14 +6,16 @@ The tests look the same until we get to the exception tests.  Here is some code 
 
 ###1) Make the project internal visible to the unit test
 
+(See https://www.youtube.com/watch?v=dweVExK8IPs for more info oninternal visible)
+
 ```
 	<ItemGroup>
 		<InternalsVisibleTo Include="PartialMock.ClassLibrary.Tests.Unit" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 ```
-###2) Create the service as normal
-####AddressService.cs
+### 2) Create the service as normal
+#### AddressService.cs
 ```cs
     public partial class AddressService : IAddressService
     {
@@ -32,8 +34,10 @@ The tests look the same until we get to the exception tests.  Here is some code 
     }
 ```
 
-####AddressService.Validations.cs   
+#### AddressService.Validations.cs   
+
 Instead of using `private static void ValidateAddress(string address)` we change this to `virtual internal void ValidateAddress(string address)`.  With the library internally visible to the unit test project, Moq will now be able to see this, allowing us to explicitly setup alternate actions.
+
 ```cs
     public partial class AddressService
     {
@@ -69,11 +73,15 @@ Instead of using `private static void ValidateAddress(string address)` we change
     }
 ```
 
-###3) AddressServiceTests.Exceptions.CleanAddress.cs
+### 3) The partial mock
+
 Here we create a mock of the concrete implementation with an initializer block that sets the CallBase property of the mock object to true. 
+
 When `CallBase` is set to `true`, it means that the base implementation of the methods in the mocked class (AddressService in this case) will be called if a method is not explicitly set up in the mock.
+
 Next we use this line `mock.Setup(x => x.ValidateAddress(It.IsAny<string>())).Throws(serviceException);` to specify that the `ValidateAddress` method should throw an exception so we can test the TryCatch.
 
+#### AddressServiceTests.Exceptions.CleanAddress.cs
 ```cs
     public partial class AddressServiceTests
     {
