@@ -6,7 +6,7 @@ The tests look the same until we get to the exception tests.  Here is some code 
 
 ###1) Make the project internal visible to the unit test
 
-(See https://www.youtube.com/watch?v=dweVExK8IPs for more info oninternal visible)
+(See https://www.youtube.com/watch?v=dweVExK8IPs for more info on internal visible / assemblies as friend in c#)
 
 ```
 	<ItemGroup>
